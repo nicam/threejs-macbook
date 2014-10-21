@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Macbook Configurator</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<div id="webgl-container">
+</div>
+<div id="gui-container" style="position:absolute;z-index:1;top:0;left:0">
+</div>
+
+<body>
+    <script type="text/javascript" src="js/three.js"></script>
+    <script type="text/javascript" src="js/OrbitControls.js"></script>
+    <script type="text/javascript" src="js/ColladaLoader.js"></script>
+    <script type="text/javascript" src="js/dat.gui.js"></script>
+    <script type="text/javascript">
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+
+        renderer.setClearColor(0xeeeeee, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        var webglContainer = document.getElementById('webgl-container');
+        webglContainer.appendChild(renderer.domElement);
+
+         // camera controls
+        var camControls = new THREE.OrbitControls(camera, renderer.domElement);
+        camControls.damping = 0.2;
+        camControls.addEventListener('change', render);
+
+         // window resize handler
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
+        }
+
+        var axes = new THREE.AxisHelper(20);
+//      scene.add(axes);
+
+        var grid = new THREE.GridHelper(40, 1);
+
+         // create the ground plane
+        var planeGeometry = new THREE.PlaneGeometry(500, 500, 10, 10);
+        var floorTexture = THREE.ImageUtils.loadTexture("assets/floor_wood_black.jpg" );
+        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+        floorTexture.repeat.set( 8, 8 );
+
+        var planeMaterial = new THREE.MeshPhongMaterial({
+            map: floorTexture
+        });
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.x = 0;
+        plane.position.y = -30;
+        plane.position.z = 0;
+
+        scene.add(plane);
+
+        // Load Screenshot
+        screenTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_01.JPG" );
+        screenMaterial = new THREE.MeshPhongMaterial({ map : screenTexture });
+        var screenGeometry = new THREE.PlaneGeometry(16.6, 10.375, 10, 10);
+        var screenPlane = new THREE.Mesh(screenGeometry, screenMaterial);
+        screenPlane.position.x = 0;
+        screenPlane.position.y = 6.65;
+        screenPlane.position.z = -6.275;
+
+        // Build Logo
+        var scaleFactor = 1.25;
+        var logoGeometry = new THREE.PlaneGeometry(1.6*scaleFactor, 2*scaleFactor, 10, 10);
+        logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_diff_old.png" );
+        logoMaterial = new THREE.MeshPhongMaterial({ map : logoTexture, side: THREE.DoubleSide, transparent: true });
+        var logoPlane = new THREE.Mesh(logoGeometry, logoMaterial);
+        logoPlane.position.x = 0;
+        logoPlane.position.y = 6.65;
+        logoPlane.position.z = -6.58;
+        logoPlane.rotation.y = Math.PI;
+
+
+
+    var imagePrefix = "assets/images/dawnmountain-";
+    var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+    var imageSuffix = ".png";
+    var skyGeometry = new THREE.BoxGeometry( 500, 500, 500 );    
+    
+    var materialArray = [];
+    for (var i = 0; i < 6; i++)
+        materialArray.push( new THREE.MeshPhongMaterial({
+            map: THREE.ImageUtils.loadTexture( "assets/brick_texture3316.jpg" ),
+            side: THREE.BackSide
+        }));
+    var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
+    var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+    scene.add( skyBox );
+
+         // ---- 3D CONTENT CREATION -----------------------------------------------------
+
+        var setMaterial = function(node, material) {
+          node.material = material;
+          if (node.children) {
+            for (var i = 0; i < node.children.length; i++) {
+              setMaterial(node.children[i], material);
+            }
+          }
+        }
+        
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        loader.load('assets/mbair.dae', function (collada) {
+            var dae = collada.scene;
+
+            dae.position.set(0, 0, 0); //x,z,y- if you think in blender dimensions ;)
+            dae.scale.set(0.05, 0.05, 0.05);
+            scene.add(dae);
+            scene.add(screenPlane);
+            // scene.add(logoPlane);
+            
+
+            console.log('screen elements', dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials);
+            console.log('keyboard elements', dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials);
+
+            // Set logo of Apple Logo
+            // dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[2].color = new THREE.Color( 0xff0000 );
+
+            // Set texture of apple logo
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[2] = new THREE.MeshLambertMaterial({ map : logoTexture, side: THREE.DoubleSide, transparent: true });
+
+            // Load Keyboard Texture
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[2].map = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_diff.jpg');
+
+            // Create red Trackpad
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[0].color = new THREE.Color( 0xff0000 );
+
+            // make yellow feet (rubbers)
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[1].color = new THREE.Color( 0xffff00 );
+
+            // Set Color of Aluminum to green
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[6].color = new THREE.Color( 0x00ff00 );
+
+            // Set Color of Metal Insides
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[6].color = new THREE.Color( 0x00ff00 );
+
+            // Set color of screws
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[5].color = new THREE.Color( 0x0000ff );
+
+            // console.log(dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials);
+
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[0]
+            var texture_logo = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_02.jpg');
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[4].map = texture_logo;
+            dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[4].side = THREE.DoubleSide;
+            render();
+        });
+
+        loader.load('assets/table.dae', function (collada) {
+            var dae = collada.scene;
+            dae.position.set(0, -1, 0); //x,z,y- if you think in blender dimensions ;)
+            dae.scale.set(0.1, 0.1, 0.1);
+            scene.add(dae);
+            render();
+        });
+
+         // ---- END OF 3D CONTENT CREATION ---------------------------------------------
+
+         // position and point the camera to the center of the scene
+        camera.position.x = -35;
+        camera.position.y = 40;
+        camera.position.z = 60;
+        camera.lookAt(scene.position);
+
+         // add spotlight
+        var spotLight = new THREE.SpotLight(0xf0f0f0);
+        spotLight.position.set(800, 700, 900);
+        scene.add(spotLight);
+
+        var spotLight = new THREE.SpotLight(0xf0f0f0);
+        spotLight.position.set(-800, -700, -900);
+        scene.add(spotLight);
+
+         // add GUI control elements
+        var guiControls = new function () {
+            this.showAxes = true;
+            this.showGrid = true;
+            this.showPlane = true;
+            this.asWireframes = true;
+            this.animated = true;
+            this.withShadow = true;
+            this.withFog = true;
+        }
+
+        var gui = new dat.GUI();
+        var guiContainer = document.getElementById('gui-container');
+        guiContainer.appendChild(gui.domElement);
+        gui.add(guiControls, 'showAxes').onChange(function (e) {
+            showAxes = e;
+            if (showAxes) {
+                scene.add(axes);
+            } else {
+                scene.remove(axes);
+            }
+            render();
+        });
+        gui.add(guiControls, 'showGrid').onChange(function (e) {
+            showGrid = e;
+            if (showGrid) {
+                scene.add(grid);
+            } else {
+                scene.remove(grid);
+            }
+            render();
+        });
+        gui.add(guiControls, 'showPlane').onChange(function (e) {
+            showPlane = e;
+            if (showPlane) {
+                scene.add(plane);
+            } else {
+                scene.remove(plane);
+            }
+            render();
+        });
+
+        gui.add(guiControls, 'asWireframes').onChange(function (e) {
+            asWireframes = e;
+            // TODO: for all material.wireframe = asWireframes;
+            cubeMaterial.wireframe = asWireframes;
+            render();
+        });
+        gui.close();
+
+         // init and call render function
+        function render() {
+            renderer.render(scene, camera);
+        }
+        initAnim(true); // no gui
+        initShadow(true);
+        initFog(false);
+        render();
+        setShadow(false);
+        setFog(true);
+
+        // console.log(camera.position.x,
+        // camera.position.y,
+        // camera.position.z)
+
+         // animate the 3D objects
+        function initAnim(value) {
+            if (value) {
+                gui.add(guiControls, 'animated').onChange(function (e) {
+                    animated = e;
+                    if (animated) animate();
+                });
+            }
+        }
+
+        var step = 0;
+        var scalingStep = 0;
+
+        function animate() {
+            if (guiControls.animated) {
+                // DO ANIMATING 3D ELEMENTS
+
+                // request re-rendering
+                requestAnimationFrame(animate);
+            }
+            render();
+        }
+
+         // shadow cast on plane
+        function initShadow(value) {
+            // SET receiveShadow AND castShadow FLAGS OF 3D ELEMENTS WITH SHADOW
+            plane.receiveShadow = value;
+            spotLight.castShadow = value;
+            renderer.shadowMapEnabled = value;
+            if (value) {
+                gui.add(guiControls, 'withShadow').onChange(function (e) {
+                    withShadow = e;
+                    setShadow(withShadow);
+                });
+            }
+        }
+
+        function setShadow(value) {
+            if (value) {
+                renderer.shadowMapAutoUpdate = true;
+            } else {
+                renderer.shadowMapAutoUpdate = false;
+                renderer.clearTarget(spotLight.shadowMap);
+            }
+            render();
+        }
+
+         // fog
+        var fog;
+
+        function initFog(value) {
+            if (value) {
+                fog = new THREE.Fog(0xeeeeee, 0.0000001, 150);
+                scene.fog = fog;
+                gui.add(guiControls, 'withFog').onChange(function (e) {
+                    withFog = e;
+                    setFog(withFog);
+                });
+            }
+        }
+
+        function setFog(value) {
+            if (!fog) return;
+            if (value) {
+                fog.near = 0.000000001;
+                fog.far = 150;
+            } else {
+                fog.near = 8000;
+                fog.far = 8000;
+            }
+            render();
+        }
+    </script>
+</body>
+
+</html>
