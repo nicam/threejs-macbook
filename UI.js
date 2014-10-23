@@ -19,9 +19,9 @@ $('#tf_keyboardColor').ColorPicker({flat: true,
     }
 });
 
-$("#ui_logo_dropdow").onchange = function(){
+document.getElementById("ui_logo_dropdown").onchange = function(){
     setAppleLogo(this.value);
-    render();
+    setTimeout(render, 100);
 }
 
 // UI
