@@ -4,6 +4,10 @@
 <head>
     <title>Macbook Configurator</title>
     <meta charset="utf-8">
+    
+    
+	<link rel="stylesheet" href="colorpicker/css/colorpicker.css" type="text/css" />
+    <link rel="stylesheet" media="screen" type="text/css" href="colorpicker/css/layout.css" />
     <style>
         body {
             margin: 0;
@@ -26,6 +30,12 @@
             right: 1em;
         }
         
+        .ui .back {
+            position: absolute;
+            bottom: 1em;
+            left: 1em;
+        }
+        
         .ui {
             display: none;
         }
@@ -42,20 +52,40 @@
 <div id="ui">
     <div class="ui active" id="ui_body">
         <h1>Configure Aluminium</h1>
-        <input id="tf_body" type="text" placeholder="Aluminium Color" />
+        <p id="tf_body">
         
         <input id="body_next" class="next" type="button" value="next" />
     </div>
     
+    <div class="ui" id="ui_keyboard">
+        <h1>Configure Keyboard</h1>
+        <p id="tf_keyboardColor">
+        
+        <input id="keyboard_back" class="back" type="button" value="back" />
+        <input id="keyboard_next" class="next" type="button" value="next" />
+    </div>
+    
     <div class="ui" id="ui_trackpad">
         <h1>Configure Trackpad</h1>
-        <input id="tf_trackpadColor" type="text" placeholder="Trackpad Color" />
+        <p id="tf_trackpadColor">
         
+        <input id="trackpad_back" class="back" type="button" value="back" />
         <input id="trackpad_next" class="next" type="button" value="next" />
+    </div>
+    
+    <div class="ui" id="ui_logo">
+        <h1>Configure Logo</h1>
+        
+        <input id="logo_back" class="back" type="button" value="back" />
     </div>
 </div>
 
 <body>
+	<script type="text/javascript" src="colorpicker/js/jquery.js"></script>
+	<script type="text/javascript" src="colorpicker/js/colorpicker.js"></script>
+    <script type="text/javascript" src="colorpicker/js/eye.js"></script>
+    <script type="text/javascript" src="colorpicker/js/utils.js"></script>
+    <script type="text/javascript" src="colorpicker/js/layout.js?ver=1.0.2"></script>
     <script type="text/javascript" src="js/three.js"></script>
     <script type="text/javascript" src="js/ColladaLoader.js"></script>
     <script type="text/javascript" src="js/OrbitControls.js"></script>
