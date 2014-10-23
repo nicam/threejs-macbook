@@ -19,6 +19,11 @@ $('#tf_keyboardColor').ColorPicker({flat: true,
     }
 });
 
+$("#ui_logo_dropdow").onchange = function(){
+    setAppleLogo(this.value);
+    render();
+}
+
 // UI
 function showBody(){
     camera.position.x = -35;
