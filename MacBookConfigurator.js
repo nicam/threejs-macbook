@@ -66,3 +66,10 @@ function setFeetColor(color){
 function setTrackpadColor(color){
     macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[0].color = color;
 }
+
+function setKeyBoardColor(color) {
+    
+    macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[2].map = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_transparent_white.png');
+    macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[2].map = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_transparent_black.png');
+    macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[2].color = color;
+}
