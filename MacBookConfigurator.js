@@ -1,9 +1,8 @@
 
 var loader = new THREE.ColladaLoader();
 var screenTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_01.JPG" );
-var logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_diff_old.png" );
+var logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_0.png" );
 var texture_logo = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_02.jpg');
-var logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_diff_old.png" );
 
 var macbook;
 loader.options.convertUpAxis = true;
@@ -65,4 +64,9 @@ function setFeetColor(color){
 
 function setTrackpadColor(color){
     macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[0].color = color;
+}
+
+function setAppleLogo(number){
+    var logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_" + number + ".png" );
+    macbook.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[2] = new THREE.MeshLambertMaterial({ map : logoTexture, side: THREE.DoubleSide, transparent: true });
 }
