@@ -14,4 +14,8 @@ Three.js Macbook configurator
 
 ##Enjoy
 Go to <a href="http://localhost:8000">http://localhost:8000</a>
- 
+
+
+#Credits
+
+A school project for CGR from <a href="https://twitter.com/tmin3">@tmin3</a> and <a href="https://twitter.com/nicam">@nicam</a>.
