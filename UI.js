@@ -1,28 +1,46 @@
-$('#tf_body').ColorPicker({flat: true,
+$('#tf_body').colpick(
+    {flat: true,
+    layout:'hex',
+    colorScheme: 'dark',
+    submit:0,
     onChange: function (hsb, hex, rgb) {
         setAluminiumColor(new THREE.Color(parseInt("0x0" + hex, 16)));
         render();
     }
 });
 
-$('#tf_trackpadColor').ColorPicker({flat: true,
+$('#ui').drags();
+
+$('#tf_trackpadColor').colpick(
+    {
+    flat:true,
+    layout:'hex',
+    colorScheme: 'dark',
+    submit:0,
     onChange: function (hsb, hex, rgb) {
         setTrackpadColor(new THREE.Color(parseInt("0x0" + hex, 16)));
         render();
     }
 });
 
-$('#tf_keyboardColor').ColorPicker({flat: true,
+$('#tf_keyboardColor').colpick({
+    flat: true,
+    layout:'hex',
+    colorScheme: 'dark',
+    submit:0,
     onChange: function (hsb, hex, rgb) {
         setKeyboardColor(new THREE.Color(parseInt("0x0" + hex, 16)));
         render();
     }
 });
 
-document.getElementById("ui_logo_dropdown").onchange = function(){
-    setAppleLogo(this.value);
+$('.apple-logo').click(function () {
+    setAppleLogo(this.src);
     setTimeout(render, 100);
-}
+})
+
+$('#trigger_webcam').click(triggerWebcam);
+$('#trigger_screen').click(triggerScreen);
 
 // UI
 function showBody(){
@@ -33,7 +51,13 @@ function showBody(){
     render();
 }
 
-function showKeyboad(){
+function calculateDelta(source, target, duration) {
+    var distance = Math.abs(Math.abs(source) - Math.abs(target));
+    var iteration = distance / duration;
+    return iteration;
+}
+
+function showKeyboard(){
     camera.position.x = 0;
     camera.position.y = 11;
     camera.position.z = 0;
@@ -63,33 +87,51 @@ function showLogo(){
     render();
 }
 
-document.getElementById("body_next").onclick = function(){
+function showContent() {
+    camera.position.x = 0;
+    camera.position.y = 16;
+    camera.position.z = 33;
+    camera.lookAt(scene.position);
+    render();
+}
+
+$("#body_next").click(function(){
     document.getElementById("ui_body").classList.toggle("active");
     document.getElementById("ui_keyboard").classList.toggle("active");
-    showKeyboad();
-}
-document.getElementById("keyboard_back").onclick = function(){
+    showKeyboard();
+});
+$("#keyboard_back").click(function(){
     document.getElementById("ui_body").classList.toggle("active");
     document.getElementById("ui_keyboard").classList.toggle("active");
     showBody();
-}
-document.getElementById("keyboard_next").onclick = function(){
+});
+$("#keyboard_next").click(function(){
     document.getElementById("ui_keyboard").classList.toggle("active");
     document.getElementById("ui_trackpad").classList.toggle("active");
     showTrackpad();
-}
-document.getElementById("trackpad_back").onclick = function(){
+});
+$("#trackpad_back").click(function(){
     document.getElementById("ui_trackpad").classList.toggle("active");
     document.getElementById("ui_keyboard").classList.toggle("active");
-    showKeyboad();
-}
-document.getElementById("trackpad_next").onclick = function(){
+    showKeyboard();
+});
+$("#trackpad_next").click(function(){
     document.getElementById("ui_trackpad").classList.toggle("active");
     document.getElementById("ui_logo").classList.toggle("active");
     showLogo();
-}
-document.getElementById("logo_back").onclick = function(){
+});
+$("#logo_back").click(function(){
     document.getElementById("ui_logo").classList.toggle("active");
     document.getElementById("ui_trackpad").classList.toggle("active");
     showTrackpad();
-}
+});
+$("#logo_next").click(function(){
+    document.getElementById("ui_logo").classList.toggle("active");
+    document.getElementById("ui_content").classList.toggle("active");
+    showContent();
+});
+$("#content_back").click(function(){
+    document.getElementById("ui_content").classList.toggle("active");
+    document.getElementById("ui_logo").classList.toggle("active");
+    showLogo();
+});

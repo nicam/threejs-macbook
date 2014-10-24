@@ -1,212 +1,79 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>Macbook Configurator</title>
-    <meta charset="utf-8">
-    
-    
-	<link rel="stylesheet" href="colorpicker/css/colorpicker.css" type="text/css" />
-    <link rel="stylesheet" media="screen" type="text/css" href="colorpicker/css/layout.css" />
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
+    <head>
+        <title>Macbook Configurator</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="colorpicker/css/colorpicker.css" type="text/css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/colpick.css" type="text/css"/>
+        <link rel="stylesheet" href="css/ui.css" type="text/css"/>
+    </head>
 
-        #ui {
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding-bottom: 40px;
-            width: 400px;
-            background-color: rgba(0,0,0,0.7);
-            color: white;
-        }
-        
-        .ui .next {
-            position: absolute;
-            bottom: 1em;
-            right: 1em;
-        }
-        
-        .ui .back {
-            position: absolute;
-            bottom: 1em;
-            left: 1em;
-        }
-        
-        .ui {
-            display: none;
-        }
-        
-        .ui.active {
-            display: block;
-        }
-    </style>
-</head>
-
-<div id="webgl-container">
-</div>
-  
-<div id="ui">
-    <div class="ui active" id="ui_body">
-        <h1>Configure Aluminium</h1>
-        <p id="tf_body">
-        
-        <input id="body_next" class="next" type="button" value="next" />
+    <div class="loaderOverlay">
+        <div class="progress">
+          <div id="progress" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+            <span class="sr-only">60% Complete</span>
+          </div>
+        </div>
     </div>
-    
-    <div class="ui" id="ui_keyboard">
-        <h1>Configure Keyboard</h1>
-        <p id="tf_keyboardColor">
+
+    <div id="webgl-container"></div>
+      
+    <div id="ui" class="container">
+        <div class="ui active" id="ui_body">
+            <h1>Configure Body</h1>
+            <div id="tf_body"></div>
+            <input id="body_next" class="next btn btn-primary pull-right" type="button" value="next" />
+        </div>
         
-        <input id="keyboard_back" class="back" type="button" value="back" />
-        <input id="keyboard_next" class="next" type="button" value="next" />
-    </div>
-    
-    <div class="ui" id="ui_trackpad">
-        <h1>Configure Trackpad</h1>
-        <p id="tf_trackpadColor">
-        
-        <input id="trackpad_back" class="back" type="button" value="back" />
-        <input id="trackpad_next" class="next" type="button" value="next" />
-    </div>
-    
-    <div class="ui" id="ui_logo">
-        <h1>Configure Logo</h1>
-        
-        <select id="ui_logo_dropdown">
-            <option value="0">Old</option>
-            <option value="1">Awesome</option>
-            <option value="2">Windows</option>
-            <option value="3">White</option>
-        </select>
-        
-        <input id="logo_back" class="back" type="button" value="back" />
-    </div>
-</div>
-
-<body>
-	<script type="text/javascript" src="colorpicker/js/jquery.js"></script>
-	<script type="text/javascript" src="colorpicker/js/colorpicker.js"></script>
-    <script type="text/javascript" src="colorpicker/js/eye.js"></script>
-    <script type="text/javascript" src="colorpicker/js/utils.js"></script>
-    <script type="text/javascript" src="colorpicker/js/layout.js?ver=1.0.2"></script>
-    <script type="text/javascript" src="js/three.js"></script>
-    <script type="text/javascript" src="js/ColladaLoader.js"></script>
-    <script type="text/javascript" src="js/OrbitControls.js"></script>
-    <script type="text/javascript" src="MacBookConfigurator.js"></script>
-    <script type="text/javascript" src="UI.js"></script>
-    <script type="text/javascript">
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        var renderer = new THREE.WebGLRenderer();
-
-        renderer.setClearColor(0xeeeeee, 1.0);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        var webglContainer = document.getElementById('webgl-container');
-        webglContainer.appendChild(renderer.domElement);
-
-        // window resize handler
-        window.addEventListener('resize', onWindowResize, false);
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // camera controls
-        var camControls = new THREE.OrbitControls(camera, renderer.domElement);
-        camControls.damping = 0.2;
-        camControls.addEventListener('change', render);
-        
-        var axes = new THREE.AxisHelper(20);
-        var grid = new THREE.GridHelper(40, 1);
-
-         // create the ground plane
-        var planeGeometry = new THREE.PlaneGeometry(500, 500, 10, 10);
-        var floorTexture = THREE.ImageUtils.loadTexture("assets/floor_wood_black.jpg" );
-        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-        floorTexture.repeat.set(8, 8);
-
-        var planeMaterial = new THREE.MeshPhongMaterial({
-            map: floorTexture
-        });
-        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.rotation.x = -0.5 * Math.PI;
-        plane.position.x = 0;
-        plane.position.y = -30;
-        plane.position.z = 0;
-        scene.add(plane);
-
-        var imagePrefix = "assets/images/dawnmountain-";
-        var directions  = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
-        var imageSuffix = ".png";
-        var skyGeometry = new THREE.BoxGeometry( 500, 500, 500 );    
-
-        var materialArray = [];
-        for (var i = 0; i < 6; i++){
-            materialArray.push( new THREE.MeshPhongMaterial({
-                map: THREE.ImageUtils.loadTexture( "assets/brick_texture3316.jpg" ),
-                side: THREE.BackSide
-            }));
-        }
-        var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
-        var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
-        scene.add(skyBox);
-        
-        loader.load('assets/table.dae', function (collada) {
-            var dae = collada.scene;
-            dae.position.set(0, -1, 0); //x,z,y- if you think in blender dimensions ;)
-            dae.scale.set(0.1, 0.1, 0.1);
-            scene.add(dae);
+        <div class="ui" id="ui_keyboard">
+            <h1>Configure Keyboard</h1>
+            <div id="tf_keyboardColor"></div>
             
-            render();
-        });
+            <input id="keyboard_back" class="back btn" type="button" value="back" />
+            <input id="keyboard_next" class="next btn btn-primary pull-right" type="button" value="next" />
+        </div>
+        
+        <div class="ui" id="ui_trackpad">
+            <h1>Configure Trackpad</h1>
+            <div id="tf_trackpadColor"></div>
+            
+            <input id="trackpad_back" class="back btn" type="button" value="back" />
+            <input id="trackpad_next" class="next btn btn-primary pull-right" type="button" value="next" />
+        </div>
+        
+        <div class="ui" id="ui_logo">
+            <h1>Configure Logo</h1>
+            <img class="apple-logo" src="assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_0.png">
+            <img class="apple-logo" src="assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_1.png">
+            <img class="apple-logo" src="assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_2.png">
+            <img class="apple-logo" src="assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_3.png">
+            <input id="logo_back" class="back btn" type="button" value="back" />
+            <input id="logo_next" class="next btn btn-primary pull-right" type="button" value="next" />
+        </div>
 
-        // position and point the camera to the center of the scene
-        camera.position.x = -35;
-        camera.position.y = 40;
-        camera.position.z = 60;
-        camera.lookAt(scene.position);
+        <div class="ui" id="ui_content">
+            <h1>Select content</h1>
+            <img class="screen-trigger" id="trigger_screen" src="assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_01.JPG">
+            <img class="screen-trigger" id="trigger_webcam" src="assets/Apple MacBook Pro 15/maps/webcam.JPG">
+            <input id="content_back" class="back btn" type="button" value="back" />
+        </div>
+    </div>
 
-        // add spotlight
-        var spotLight = new THREE.SpotLight(0xf0f0f0);
-        spotLight.position.set(800, 700, 900);
-        scene.add(spotLight);
-
-        var spotLight = new THREE.SpotLight(0xf0f0f0);
-        spotLight.position.set(-800, -700, -900);
-        scene.add(spotLight);
-
-        // init and call render function
-        function render() {
-            renderer.render(scene, camera);
-            //requestAnimationFrame(render);
-        }
-        initShadow(true);
-        render();
-        setShadow(false);
-
-        // shadow cast on plane
-        function initShadow(value) {
-            // SET receiveShadow AND castShadow FLAGS OF 3D ELEMENTS WITH SHADOW
-            plane.receiveShadow = value;
-            spotLight.castShadow = value;
-            renderer.shadowMapEnabled = value;
-        }
-
-        function setShadow(value) {
-            if (value) {
-                renderer.shadowMapAutoUpdate = true;
-            } else {
-                renderer.shadowMapAutoUpdate = false;
-                renderer.clearTarget(spotLight.shadowMap);
-            }
-        }
-    </script>
-</body>
+    <body>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="js/colpick.js" ></script>
+        <script type="text/javascript" src="js/draggable.js" ></script>
+        <script type="text/javascript" src="js/three.js"></script>
+        <script type="text/javascript" src='js/threex.webcamtexture.js'></script>
+        <script type="text/javascript" src="js/ColladaLoader.js"></script>
+        <script type="text/javascript" src="js/OrbitControls.js"></script>
+        <script type="text/javascript" src="environment.js"></script>
+        <script type="text/javascript" src="MacBookConfigurator.js"></script>
+        <script type="text/javascript" src="UI.js"></script>
+        <script type="text/javascript" src="room.js"></script>
+        <script type="text/javascript" src="table.js"></script>
+    </body>
 
 </html>
