@@ -3,7 +3,7 @@ var loader = new THREE.ColladaLoader();
 var screenTexture = loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_01.JPG");
 var logoTexture = loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_0.png");
 var texture_logo = loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_home_screen_diff_02.jpg');
-var keyboardTexture = loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_diff.jpg');
+var keyboardTexture = loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_diff.JPG');
 var screenPlane, screenGeometry, webcamPlane;
 var continuesRender = false;
 var macbook;
