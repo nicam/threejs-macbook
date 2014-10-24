@@ -17,11 +17,12 @@ loader.load('assets/mbair.dae', function (collada) {
     dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[2] = new THREE.MeshLambertMaterial({ map : logoTexture, side: THREE.DoubleSide, transparent: true });
 
     // Load Keyboard Texture
-    dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[2].map = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_diff.jpg');
+    dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[2].map = THREE.ImageUtils.loadTexture('assets/Apple MacBook Pro 15/maps/mpm_F21_keyboard_diff.jpg', render);
 
-    dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[0];
+    dae.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[0].side = THREE.DoubleSide;
     dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[4].map = texture_logo;
-    dae.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[4].side = THREE.DoubleSide;
+    macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[6].side = THREE.DoubleSide;
+    setFeetColor(new THREE.Color(0x000000));
 
     // Load Screenshot
     var screenMaterial = new THREE.MeshPhongMaterial({ map : screenTexture });
@@ -31,22 +32,10 @@ loader.load('assets/mbair.dae', function (collada) {
     screenPlane.position.y = 6.65;
     screenPlane.position.z = -6.275;
 
-    // Build Logo
-    /*
-    var scaleFactor = 1.25;
-    var logoGeometry = new THREE.PlaneGeometry(1.6*scaleFactor, 2*scaleFactor, 10, 10);
-    var logoMaterial = new THREE.MeshPhongMaterial({ map : logoTexture, side: THREE.DoubleSide, transparent: true });
-    var logoPlane = new THREE.Mesh(logoGeometry, logoMaterial);
-    logoPlane.position.x = 0;
-    logoPlane.position.y = 6.65;
-    logoPlane.position.z = -6.58;
-    logoPlane.rotation.y = Math.PI;
-    */
-    
     scene.add(dae);
     scene.add(screenPlane);
     
-    render();
+    setTimeout(render, 500);
 });
 
 function setScrewColor(color){
@@ -54,7 +43,6 @@ function setScrewColor(color){
 }
 
 function setAluminiumColor(color){
-    macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[6].color = color;
     macbook.getObjectByName("F21_Apple_MacBook_Pro_Keyboard", true).children[0].material.materials[6].color = color;
 }
 
@@ -67,7 +55,7 @@ function setTrackpadColor(color){
 }
 
 function setAppleLogo(number){
-    logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_" + number + ".png" );
+    logoTexture = THREE.ImageUtils.loadTexture("assets/Apple MacBook Pro 15/maps/mpm_F21_apple_logo_" + number + ".png");
     macbook.getObjectByName("F21_Apple_MacBook_Pro_Display", true).children[0].material.materials[2] = new THREE.MeshLambertMaterial({ map : logoTexture, side: THREE.DoubleSide, transparent: true });
 }
 
